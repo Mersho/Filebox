@@ -1,30 +1,22 @@
 import { Checkbox } from "@headlessui/react"
 import moment from "moment"
 import { useState, useEffect } from "react"
+import { Icon } from "./components/ui/icon"
 
-const FolderIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" className="w-12 h-12 lg:w-20 lg:h-20">
-    <rect width="28" height="15" x="32" y="16" fill="#f29611" rx="2.5" ry="2.5" />
-    <path fill="#ffb32c" d="M59.778 61H12.222A6.421 6.421 0 016 54.396V17.604A6.421 6.421 0 0112.222 11h18.476a4.671 4.671 0 014.113 2.564L38 24h21.778A5.91 5.91 0 0166 30v24.396A6.421 6.421 0 0159.778 61z" />
-    <path fill="#f2a222" d="M8.015 59c2.169 2.383 4.698 2.016 6.195 2h44.57a6.277 6.277 0 005.207-2z" />
-  </svg>
-)
+interface ItemProps {
+  name: string
+  onCheckChange: (checked: boolean) => void
+  modifiedDate: Date
+  icon: React.ReactNode
+}
 
-const ThreeDotsButton = () => (
-  <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-    </svg>
-  </button>
-)
+function Item({ name, onCheckChange, modifiedDate, icon }: ItemProps) {
+  const [isChecked, setIsChecked] = useState(false)
 
-const FolderItem = ({ name, onCheckChange, modifiedDate }: { name: string; onCheckChange: (checked: boolean) => void; modifiedDate: Date }) => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleChange = (checked: boolean) => {
-    setIsChecked(checked);
-    onCheckChange(checked);
-  };
+  function handleChange(checked: boolean) {
+    setIsChecked(checked)
+    onCheckChange(checked)
+  }
 
   return (
     <div className="relative flex flex-col items-center w-32 lg:w-36 text-center p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-700">
@@ -37,13 +29,23 @@ const FolderItem = ({ name, onCheckChange, modifiedDate }: { name: string; onChe
           <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </Checkbox>
-      <ThreeDotsButton />
-      <FolderIcon />
+      <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <Icon name="threeDots" className="w-5 h-5" /> 
+      </button>
+      {icon}
       <span className="mt-2 text-sm lg:text-base dark:text-white">{name}</span>
       <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">{moment(modifiedDate).fromNow()}</span>
     </div>
-  );
-};
+  )
+}
+
+const FolderItem = (props: Omit<ItemProps, 'icon'>) => (
+  <Item {...props} icon={<Icon name="folder" className="w-12 h-12 lg:w-20 lg:h-20" />} />
+)
+
+const FileItem = (props: Omit<ItemProps, 'icon'>) => (
+  <Item {...props} icon={<Icon name="pdf" className="w-12 h-12 lg:w-20 lg:h-20" />} />
+)
 
 function App() {
   const [selectedCount, setSelectedCount] = useState(0)
@@ -88,6 +90,7 @@ function App() {
           <FolderItem name="Documents" onCheckChange={handleCheckChange} modifiedDate={new Date()} />
           <FolderItem name="Music" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 20 * 60 * 1000)} />
           <FolderItem name="Others" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 40 * 60 * 1000)} />
+          <FileItem name="Report.pdf" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 5 * 60 * 1000)} />
         </div>
       </div>
     </div>
