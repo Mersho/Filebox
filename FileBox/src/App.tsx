@@ -2,24 +2,28 @@ import { Checkbox } from "@headlessui/react"
 import moment from "moment"
 import { useState, useEffect } from "react"
 import { Icon } from "./components/ui/icon"
+import { bytesToSize } from "./lib/utils"
 
 interface ItemProps {
   name: string
   onCheckChange: (checked: boolean) => void
   modifiedDate: Date
   icon: React.ReactNode
+  size?: number
 }
 
-function Item({ name, onCheckChange, modifiedDate, icon }: ItemProps) {
+function Item({ name, onCheckChange, modifiedDate, icon, size }: ItemProps) {
   const [isChecked, setIsChecked] = useState(false)
 
-  function handleChange(checked: boolean) {
-    setIsChecked(checked)
-    onCheckChange(checked)
+  function handleChange(checked?: boolean) {
+    setIsChecked(checked ?? !isChecked)
+    onCheckChange(checked ?? !isChecked)
   }
 
   return (
-    <div className="relative flex flex-col items-center w-32 lg:w-36 text-center p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-700">
+    <div
+      className="relative w-32 lg:w-40 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-700"
+    >
       <Checkbox
         className="absolute top-2 left-2 group block size-4 rounded border-2 border-gray-300 bg-white dark:bg-gray-600 dark:border-gray-500 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 data-[checked]:bg-blue-500 data-[checked]:border-blue-500"
         checked={isChecked}
@@ -30,11 +34,16 @@ function Item({ name, onCheckChange, modifiedDate, icon }: ItemProps) {
         </svg>
       </Checkbox>
       <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-        <Icon name="threeDots" className="w-5 h-5" /> 
+        <Icon name="threeDots" className="w-5 h-5" />
       </button>
-      {icon}
-      <span className="mt-2 text-sm lg:text-base dark:text-white">{name}</span>
-      <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">{moment(modifiedDate).fromNow()}</span>
+      <div
+        className="flex flex-col items-center text-center"
+        onClick={() => handleChange()}
+      >
+        {icon}
+        <span className="mt-2 text-sm lg:text-base dark:text-white">{name}</span>
+        <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">{moment(modifiedDate).fromNow()} {size && `- ${bytesToSize(size)}`}</span>
+      </div>
     </div>
   )
 }
@@ -90,7 +99,7 @@ function App() {
           <FolderItem name="Documents" onCheckChange={handleCheckChange} modifiedDate={new Date()} />
           <FolderItem name="Music" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 20 * 60 * 1000)} />
           <FolderItem name="Others" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 40 * 60 * 1000)} />
-          <FileItem name="Report.pdf" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 5 * 60 * 1000)} />
+          <FileItem name="Report.pdf" onCheckChange={handleCheckChange} modifiedDate={new Date((new Date()).getTime() - 5 * 60 * 1000)} size={1000000} />
         </div>
       </div>
     </div>
