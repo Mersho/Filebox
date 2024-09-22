@@ -13,6 +13,7 @@ import GSheetDocument from './gsheet-document.svg?react'
 import HTMLDocument from './html-document.svg?react'
 import ImageDocument from './image-document.svg?react'
 import MP4Document from './mp4-document.svg?react'
+import MKVDocument from './mkv-document.svg?react'
 import PPTDocument from './ppt-document.svg?react'
 import PSDDocument from './psd-document.svg?react'
 import TXTFile from './txt-document.svg?react'
@@ -21,38 +22,73 @@ import VideoDocument from './video-document.svg?react'
 import VisioDocument from './visio-document.svg?react'
 import WebexDocument from './webex-document.svg?react'
 import WordDocument from './word-document.svg?react'
+import DocxDocument from './docx-document.svg?react'
 import PDFDocument from './pdf-document.svg?react'
 import XMLDocument from './xml-document.svg?react'
 import ZIPDocument from './zip-document.svg?react'
-import folder from './Folder.svg?react'
+import PythonDocument from './py-document.svg?react'
+import CSSDocument from './css-document.svg?react'
+import APKDocument from './apk-document.svg?react'
+import JSFile from './js-document.svg?react'
+import FLVFile from './flv-document.svg?react'
+import INIFile from './ini-document.svg?react'
+import PHPFile from './php-document.svg?react'
+import SQLFile from './sql-document.svg?react'
+import SVGDocument from './svg-document.svg?react'
+import ACCDocument from './acc-document.svg?react'
+import RARDocument from './rar-document.svg?react'
+import XLSXDocument from './xlsx-document.svg?react'
+import SRTFile from './srt-document.svg?react'
+import GoDocument from './go-document.svg?react'
+import BackSquare from './back-square.svg?react'
+import Folder from './Folder.svg?react'
 import ThreeDots from './three-dots.svg?react'
 
 export const icons = {
   audio: AudioDocument,
   boxNotes: BoxNotes,
-  csv: CSVDocument,
-  eps: EPSDocument,
-  excel: ExcelDocument,
-  exe: EXEDocument,
-  flash: FlashDocument,
+  'csv': CSVDocument,
+  'eps': EPSDocument,
+  'xls': ExcelDocument,
+  'exe': EXEDocument,
+  'fla': FlashDocument,
   gdoc: GDocDocument,
   gdocs: GDocsDocument,
   gsheet: GSheetDocument,
-  html: HTMLDocument,
-  image: ImageDocument,
-  mp4: MP4Document,
-  ppt: PPTDocument,
-  psd: PSDDocument,
-  txt: TXTFile,
+  'html': HTMLDocument,
+  'jpg': ImageDocument,
+  'png': ImageDocument,
+  'mp4': MP4Document,
+  'mkv': MKVDocument,
+  'ppt': PPTDocument,
+  'pptx': PPTDocument,
+  'psd': PSDDocument,
+  'txt': TXTFile,
+  'js': JSFile,
   unknown: UnknownDocument,
   video: VideoDocument,
-  visio: VisioDocument,
+  'vis': VisioDocument,
   webex: WebexDocument,
-  word: WordDocument,
-  pdf: PDFDocument,
-  xml: XMLDocument,
-  zip: ZIPDocument,
-  folder: folder,
+  'doc': WordDocument,
+  'docx': DocxDocument,
+  'pdf': PDFDocument,
+  'xml': XMLDocument,
+  'zip': ZIPDocument,
+  'py': PythonDocument,
+  'css': CSSDocument,
+  'apk': APKDocument,
+  'flv': FLVFile,
+  'ini': INIFile,
+  'php': PHPFile,
+  'sql': SQLFile,
+  'svg': SVGDocument,
+  'acc': ACCDocument,
+  'rar': RARDocument,
+  'xlsx': XLSXDocument,
+  'srt': SRTFile,
+  'go': GoDocument,
+  back: BackSquare,
+  folder: Folder,
   threeDots: ThreeDots,
 }
 

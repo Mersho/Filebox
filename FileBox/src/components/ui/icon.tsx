@@ -7,5 +7,8 @@ interface IconProps {
 
 export function Icon({ name, className }: IconProps) {
   const IconComponent = icons[name]
+  if (!IconComponent) {
+    return <Icon name="unknown" className={className} />
+  }
   return <IconComponent className={className} />
 }
