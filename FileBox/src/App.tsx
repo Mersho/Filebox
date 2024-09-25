@@ -25,7 +25,7 @@ interface ItemProps {
   name: string
   onCheckChange: (checked: boolean) => void
   modifiedDate: Date
-  icon: React.ReactNode
+  icon: JSX.Element
   size?: number
   onDoubleClick?: () => void
 }
@@ -64,7 +64,9 @@ function Item({ name, onCheckChange, modifiedDate, icon, size, onDoubleClick }: 
         <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity delay-1000	duration-300 whitespace-nowrap z-10 overflow-hidden w-0 group-hover:w-auto">
           {name}
         </span>
-        <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">{moment(modifiedDate).fromNow()} {size && `- ${bytesToSize(size)}`}</span>
+        <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {moment(modifiedDate).fromNow()} {icon.props.name !== "folder" ? `- ${bytesToSize(size)}` : ''}
+        </span>
       </div>
     </div>
   )
