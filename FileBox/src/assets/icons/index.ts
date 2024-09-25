@@ -43,6 +43,7 @@ import GoDocument from './go-document.svg?react'
 import BackSquare from './back-square.svg?react'
 import Folder from './Folder.svg?react'
 import ThreeDots from './three-dots.svg?react'
+import Home from './home.svg?react'
 
 export const icons = {
   audio: AudioDocument,
@@ -90,6 +91,7 @@ export const icons = {
   back: BackSquare,
   folder: Folder,
   threeDots: ThreeDots,
+  home: Home,
 }
 
 export type IconName = keyof typeof icons

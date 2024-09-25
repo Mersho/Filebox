@@ -93,13 +93,22 @@ const FileItem = (props: Omit<ItemProps, 'icon'>) => (
 )
 
 function App() {
-  const [selectedCount, setSelectedCount] = useState(0)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedDarkMode = localStorage.getItem('isDarkMode')
+    return savedDarkMode ? JSON.parse(savedDarkMode) : false
+  })
+
   const [currentPath, setCurrentPath] = useState("")
+  const [homePath, setHomePath] = useState(() => {
+    return localStorage.getItem('homePath') || ""
+  })
   const [newPath, setNewPath] = useState("")
+
   const [ws, setWs] = useState<WebSocket | null>(null)
-  const [fileInfos, setFileInfos] = useState<FileInfo[]>([])
   const [error, setError] = useState<string | null>(null)
+
+  const [selectedCount, setSelectedCount] = useState(0)
+  const [fileInfos, setFileInfos] = useState<FileInfo[]>([])
 
   useEffect(() => {
     if (isDarkMode) {
@@ -107,17 +116,22 @@ function App() {
     } else {
       document.documentElement.classList.remove('dark')
     }
+    localStorage.setItem('isDarkMode', JSON.stringify(isDarkMode))
   }, [isDarkMode])
 
   useEffect(() => {
     const ws = new WebSocket(`ws://${window.location.hostname}:3000/ws`)
     setWs(ws)
 
-    ws.onopen = () => {
+    function handleWebSocketOpen() {
       console.log('Connected to WebSocket')
+      const storedPath = localStorage.getItem('currentPath')
+      if (storedPath) {
+        ws.send(storedPath)
+      }
     }
 
-    ws.onmessage = (event) => {
+    function handleWebSocketMessage(event: MessageEvent) {
       const data = JSON.parse(event.data)
       if ('error' in data) {
         setError((data as ErrorResponse).error)
@@ -125,20 +139,34 @@ function App() {
       } else {
         const response = data as DirectoryResponse
         setCurrentPath(response.currentPath)
+        localStorage.setItem('currentPath', response.currentPath)
         setNewPath("")
         setFileInfos(response.files)
         setError(null)
+        setHomePath(prevHomePath => {
+          if (!prevHomePath) {
+            const newHomePath = response.currentPath
+            localStorage.setItem('homePath', newHomePath)
+            return newHomePath
+          }
+          return prevHomePath
+        })
       }
     }
 
-    ws.onerror = (error) => {
+    function handleWebSocketError(error: Event) {
       console.error('WebSocket error:', error)
       setError('Failed to connect to the server')
     }
 
-    ws.onclose = () => {
+    function handleWebSocketClose() {
       console.log('WebSocket connection closed')
     }
+
+    ws.onopen = handleWebSocketOpen
+    ws.onmessage = handleWebSocketMessage
+    ws.onerror = handleWebSocketError
+    ws.onclose = handleWebSocketClose
 
     return () => {
       ws.close()
@@ -194,9 +222,17 @@ function App() {
           </div>
           <div className="flex flex-col items-start w-full mt-2">
             {currentPath && (
-              <span className="px-3 py-1 bg-gray-700 text-white text-xs sm:text-sm rounded-full">
-                {currentPath}
-              </span>
+              <div className="flex items-center">
+                <Button
+                  className="rounded data-[hover]:bg-sky-500 data-[active]:bg-sky-700 mr-2 text-white"
+                  onClick={() => setNewPath(homePath)}
+                >
+                  <Icon name="home" className="w-6 h-6 sm:w-7 sm:h-7" fill={isDarkMode ? 'white' : 'black'} />
+                </Button>
+                <span className="px-3 py-1 bg-gray-700 text-white text-xs sm:text-sm rounded-full">
+                  {currentPath}
+                </span>
+              </div>
             )}
             {selectedCount > 0 && (
               <span className="px-3 py-1 mt-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full">
