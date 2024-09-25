@@ -34,9 +34,14 @@ function Item({ name, onCheckChange, modifiedDate, icon, size, onDoubleClick }: 
   const [isChecked, setIsChecked] = useState(false)
 
   function handleChange(checked?: boolean) {
-    setIsChecked(checked ?? !isChecked)
-    onCheckChange(checked ?? !isChecked)
+    const newCheckedState = checked ?? !isChecked
+    setIsChecked(newCheckedState)
+    onCheckChange(newCheckedState)
   }
+
+  useEffect(() => {
+    setIsChecked(false)
+  }, [name])
 
   return (
     <div
