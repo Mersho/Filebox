@@ -41,8 +41,11 @@ import XLSXDocument from './xlsx-document.svg?react'
 import SRTFile from './srt-document.svg?react'
 import GoDocument from './go-document.svg?react'
 import BackSquare from './back-square.svg?react'
-import Folder from './Folder.svg?react'
+import Folder from './folder.svg?react'
 import ThreeDots from './three-dots.svg?react'
+import Remove from './remove.svg?react'
+import Moon from './moon.svg?react'
+import Sun from './sun.svg?react'
 import Home from './home.svg?react'
 
 export const icons = {
@@ -91,6 +94,9 @@ export const icons = {
   back: BackSquare,
   folder: Folder,
   threeDots: ThreeDots,
+  remove: Remove,
+  moon: Moon,
+  sun: Sun,
   home: Home,
 }
 

@@ -23,34 +23,23 @@ interface ErrorResponse {
 
 interface ItemProps {
   name: string
-  onCheckChange: (checked: boolean) => void
+  isChecked: boolean
+  onCheckChange: (name: string, checked: boolean) => void
   modifiedDate: Date
   icon: JSX.Element
   size?: number
   onDoubleClick?: () => void
 }
 
-function Item({ name, onCheckChange, modifiedDate, icon, size, onDoubleClick }: ItemProps) {
-  const [isChecked, setIsChecked] = useState(false)
-
-  function handleChange(checked?: boolean) {
-    const newCheckedState = checked ?? !isChecked
-    setIsChecked(newCheckedState)
-    onCheckChange(newCheckedState)
-  }
-
-  useEffect(() => {
-    setIsChecked(false)
-  }, [name])
-
+function Item({ name, isChecked, onCheckChange, modifiedDate, icon, size, onDoubleClick }: ItemProps) {
   return (
     <div
-      className="relative w-32 lg:w-40 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-700"
+      className="relative w-32 lg:w-40 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-700"
     >
       <Checkbox
         className="absolute top-2 left-2 group block size-4 rounded border-2 border-gray-300 bg-white dark:bg-gray-600 dark:border-gray-500 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 data-[checked]:bg-blue-500 data-[checked]:border-blue-500"
         checked={isChecked}
-        onChange={handleChange}
+        onChange={(checked) => onCheckChange(name, checked)}
       >
         <svg className="stroke-white opacity-0 group-data-[checked]:opacity-100" viewBox="0 0 14 14" fill="none">
           <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -61,12 +50,12 @@ function Item({ name, onCheckChange, modifiedDate, icon, size, onDoubleClick }: 
       </Button>
       <div
         className="flex flex-col items-center text-center group relative"
-        onClick={() => handleChange()}
+        onClick={() => onCheckChange(name, !isChecked)}
         onDoubleClick={onDoubleClick}
       >
         {icon}
         <span className="w-full truncate mt-2 text-sm lg:text-base dark:text-white">{name}</span>
-        <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity delay-1000	duration-300 whitespace-nowrap z-10 overflow-hidden w-0 group-hover:w-auto">
+        <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-all delay-1000 duration-300 whitespace-nowrap z-10 max-w-[90%] truncate group-hover:max-w-none">
           {name}
         </span>
         <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -112,7 +101,7 @@ function App() {
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const [selectedCount, setSelectedCount] = useState(0)
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [fileInfos, setFileInfos] = useState<FileInfo[]>([])
 
   useEffect(() => {
@@ -184,8 +173,16 @@ function App() {
     }
   }, [newPath, ws])
 
-  function handleCheckChange(checked: boolean) {
-    setSelectedCount(prevCount => checked ? prevCount + 1 : prevCount - 1)
+  function handleCheckChange(name: string, checked: boolean) {
+    setCheckedItems(prevItems => {
+      const newItems = new Set(prevItems)
+      if (checked) {
+        newItems.add(name)
+      } else {
+        newItems.delete(name)
+      }
+      return newItems
+    })
   }
 
   function toggleDarkMode() {
@@ -194,29 +191,29 @@ function App() {
 
   function handleDoubleClick(fileInfo: FileInfo) {
     if (fileInfo.type === 'directory') {
-      setNewPath(joinPaths(currentPath, fileInfo.name));
-      setSelectedCount(0);
+      setNewPath(joinPaths(currentPath, fileInfo.name))
+      setCheckedItems(new Set())
     }
   }
 
   function handleBackButton() {
-    setNewPath(getParentDirectory(currentPath));
-    setSelectedCount(0);
+    setNewPath(getParentDirectory(currentPath))
+    setCheckedItems(new Set())
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto p-8">
         <Button
           onClick={toggleDarkMode}
-          className="fixed top-4 right-4 p-2 rounded-full bg-gray-800 dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300"
+          className="absolute top-4 right-4 p-2 rounded-full bg-gray-800 dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300"
         >
-          {isDarkMode ? '🌞' : '🌙'}
+          <Icon name={isDarkMode ? 'sun' : 'moon'} className="w-5 h-5 sm:w-6 sm:h-6" />
         </Button>
         <div className="mb-4">
           <div className="flex items-center">
             <Button
-              className="rounded data-[hover]:bg-sky-500 data-[active]:bg-sky-700 mr-2 text-white"
+              className="rounded mr-2 text-white"
               onClick={() => handleBackButton()}>
               <Icon name="back" className="w-6 h-6 sm:w-7 sm:h-7" />
               <defs>
@@ -229,7 +226,7 @@ function App() {
             {currentPath && (
               <div className="flex items-center">
                 <Button
-                  className="rounded data-[hover]:bg-sky-500 data-[active]:bg-sky-700 mr-2 text-white"
+                  className="rounded mr-2 text-white"
                   onClick={() => setNewPath(homePath)}
                 >
                   <Icon name="home" className="w-6 h-6 sm:w-7 sm:h-7" fill={isDarkMode ? 'white' : 'black'} />
@@ -239,10 +236,16 @@ function App() {
                 </span>
               </div>
             )}
-            {selectedCount > 0 && (
-              <span className="px-3 py-1 mt-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full">
-                {selectedCount} selected
-              </span>
+            {checkedItems.size > 0 && (
+              <div className="flex items-center px-3 py-1 mt-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full">
+                <Button
+                  className="mr-2"
+                  onClick={() => setCheckedItems(new Set())}
+                >
+                  <Icon name="remove" className="w-3 h-3 sm:w-4 sm:h-4" />
+                </Button>
+                <span>{checkedItems.size} selected</span>
+              </div>
             )}
           </div>
         </div>
@@ -255,6 +258,7 @@ function App() {
                 <FolderItem
                   key={index}
                   name={fileInfo.name}
+                  isChecked={checkedItems.has(fileInfo.name)}
                   onCheckChange={handleCheckChange}
                   modifiedDate={new Date(fileInfo.modifiedDate)}
                   onDoubleClick={() => handleDoubleClick(fileInfo)}
@@ -263,6 +267,7 @@ function App() {
                 <FileItem
                   key={index}
                   name={fileInfo.name}
+                  isChecked={checkedItems.has(fileInfo.name)}
                   onCheckChange={handleCheckChange}
                   modifiedDate={new Date(fileInfo.modifiedDate)}
                   size={fileInfo.size}
