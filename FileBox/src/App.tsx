@@ -236,17 +236,26 @@ function App() {
                 </span>
               </div>
             )}
-            {checkedItems.size > 0 && (
-              <div className="flex items-center px-3 py-1 mt-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full">
+            <div className="flex items-center mt-1">
+              {checkedItems.size > 0 ? (
+                <div className="flex items-center px-3 py-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full">
+                  <Button
+                    className="mr-2"
+                    onClick={() => setCheckedItems(new Set())}
+                  >
+                    <Icon name="remove" className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </Button>
+                  <span>{checkedItems.size} selected</span>
+                </div>
+              ) : (
                 <Button
-                  className="mr-2"
-                  onClick={() => setCheckedItems(new Set())}
+                  className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                  onClick={() => setCheckedItems(new Set(fileInfos.map(file => file.name)))}
                 >
-                  <Icon name="remove" className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Select All
                 </Button>
-                <span>{checkedItems.size} selected</span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
         {error ? (
