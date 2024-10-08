@@ -102,7 +102,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
 
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
-  const [fileInfos, setFileInfos] = useState<FileInfo[]>([])
+  const [filesInfo, setFilesInfo] = useState<FileInfo[]>([])
 
   useEffect(() => {
     if (isDarkMode) {
@@ -129,13 +129,13 @@ function App() {
       const data = JSON.parse(event.data)
       if ('error' in data) {
         setError((data as ErrorResponse).error)
-        setFileInfos([])
+        setFilesInfo([])
       } else {
         const response = data as DirectoryResponse
         setCurrentPath(response.currentPath)
         localStorage.setItem('currentPath', response.currentPath)
         setNewPath("")
-        setFileInfos(response.files)
+        setFilesInfo(response.files)
         setError(null)
         setHomePath(prevHomePath => {
           if (!prevHomePath) {
@@ -248,12 +248,14 @@ function App() {
                   <span>{checkedItems.size} selected</span>
                 </div>
               ) : (
-                <Button
-                  className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
-                  onClick={() => setCheckedItems(new Set(fileInfos.map(file => file.name)))}
-                >
-                  Select All
-                </Button>
+                filesInfo && (
+                  <Button
+                    className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white text-xs sm:text-sm rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                    onClick={() => setCheckedItems(new Set(filesInfo.map(file => file.name)))}
+                  >
+                    Select All
+                  </Button>
+                )
               )}
             </div>
           </div>
@@ -262,7 +264,7 @@ function App() {
           <div className="text-red-500 dark:text-red-400 mb-4">{error}</div>
         ) : (
           <div className="flex flex-wrap gap-4 lg:gap-6">
-            {fileInfos.map((fileInfo, index) => (
+            {filesInfo && filesInfo.map((fileInfo, index) => (
               fileInfo.type === 'directory' ? (
                 <FolderItem
                   key={index}
