@@ -262,9 +262,9 @@ function App() {
         </div>
         {error ? (
           <div className="text-red-500 dark:text-red-400 mb-4">{error}</div>
-        ) : (
+        ) : filesInfo ? (
           <div className="flex flex-wrap gap-4 lg:gap-6">
-            {filesInfo && filesInfo.map((fileInfo, index) => (
+            {filesInfo.map((fileInfo, index) => (
               fileInfo.type === 'directory' ? (
                 <FolderItem
                   key={index}
@@ -285,6 +285,11 @@ function App() {
                 />
               )
             ))}
+          </div>
+        ) : (
+          // TODO: Add new document/folder button or upload button
+          <div className="text-gray-500 dark:text-gray-400 text-center mt-8">
+            This folder is empty.
           </div>
         )}
       </div>
